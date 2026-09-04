@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bharat Art Atlas — Interactive Map</title>
+<style>
+:root{--ink:#142b2b;--cream:#f5efdF;--saff:#db7a3c;--blue:#2e6670;--pink:#b85b6a;--gold:#d9af52;--card:#fffaf0}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Arial,sans-serif;background:linear-gradient(180deg,#f5efdf,#ece4d1);color:var(--ink)}
+.hero{padding:56px 6% 36px;display:grid;grid-template-columns:1.05fr .95fr;gap:36px;align-items:center}
+.eyebrow{font-size:.74rem;letter-spacing:.18em;text-transform:uppercase;font-weight:900;color:var(--saff)}
+h1,h2,h3{font-family:Georgia,serif}.hero h1{font-size:clamp(3rem,7vw,6.5rem);line-height:.95;margin:12px 0 18px}.hero p{max-width:680px;color:#516665;line-height:1.75}
+.hero-card{background:var(--ink);color:#fff3dc;padding:28px;border-radius:26px;box-shadow:0 18px 40px #0002}
+.hero-card b{font:700 2rem Georgia}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:18px}.stats div{padding:12px;border:1px solid #ffffff24;border-radius:15px}.stats strong{display:block;font-size:1.5rem}
+.wrap{max-width:1180px;margin:auto;padding:20px 22px 80px}
+.controls{display:flex;gap:9px;flex-wrap:wrap;margin:18px 0 28px}.controls button{border:1px solid #ccbfa9;background:#fff9ed;padding:9px 13px;border-radius:999px;font-weight:800;color:var(--ink);cursor:pointer}.controls button.on{background:var(--ink);color:white}
+.grid{display:grid;grid-template-columns:1fr 420px;gap:28px;align-items:start}
+.map-card{position:relative;background:#efe6d4;border:1px solid #d6c7b1;border-radius:30px;padding:20px;min-height:690px;overflow:hidden}
+.map-title{position:absolute;left:24px;top:18px;z-index:4;font-weight:900;letter-spacing:.08em}
+.india{position:absolute;inset:60px 30px 30px;display:grid;place-items:center}
+.india svg{width:100%;height:100%;max-height:590px;filter:drop-shadow(0 18px 20px #0002)}
+.pin{position:absolute;transform:translate(-50%,-50%);border:0;background:transparent;cursor:pointer;z-index:6}
+.pin span{display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--pink);color:white;border:4px solid #fff6e5;box-shadow:0 5px 14px #0003;font-size:.78rem;font-weight:900;transition:.2s}
+.pin:hover span,.pin.active span{transform:scale(1.16);background:var(--saff)}
+.pin label{display:block;background:#fffaf0;padding:4px 7px;border-radius:8px;margin-top:4px;font-size:.68rem;font-weight:900;white-space:nowrap;box-shadow:0 3px 9px #0002}
+.panel{background:var(--card);border:1px solid #d8cbb7;border-radius:26px;padding:24px;position:sticky;top:20px;min-height:520px}
+.panel .big{font-size:4rem}.panel h2{font-size:2.25rem;margin:8px 0}.panel .sub{font-weight:900;color:var(--blue)}.panel p{color:#5b6e6d;line-height:1.75}
+.facts{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:18px 0}.facts div{padding:11px;background:#f3ead8;border-radius:13px}.facts small{display:block;color:#897c68;text-transform:uppercase;font-size:.62rem;letter-spacing:.08em}.facts b{font-size:.84rem}
+.tags{display:flex;gap:6px;flex-wrap:wrap}.tag{padding:6px 8px;background:#dde9e8;color:#28585a;border-radius:999px;font-size:.7rem;font-weight:900}
+.region-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:34px}.region{background:#fffaf0;border:1px solid #d7c9b3;border-radius:20px;padding:18px;cursor:pointer}.region:hover{transform:translateY(-3px);box-shadow:0 12px 25px #0001}.region b{display:block;font:700 1.25rem Georgia;margin-bottom:6px}.region span{color:#6c7b78;font-size:.84rem}
+footer{background:var(--ink);color:#e9dfcd;text-align:center;padding:30px 20px}
+@media(max-width:900px){.hero{grid-template-columns:1fr}.grid{grid-template-columns:1fr}.panel{position:relative;top:auto}.map-card{min-height:620px}.region-cards{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){.region-cards{grid-template-columns:1fr}.map-card{min-height:560px}.pin label{display:none}}
+</style>
+</head>
+<body>
+<section class="hero">
+  <div>
+    <div class="eyebrow">Interactive Art Map · CO1</div>
+    <h1>Bharat Art Atlas</h1>
+    <p>A stylized interactive map showing how Indian art traditions developed across regions. Click the numbered locations to explore monuments, painting schools, folk traditions, artists and local visual cultures.</p>
+  </div>
+  <div class="hero-card">
+    <b>India is not one art tradition — it is a network of regional visual cultures.</b>
+    <div class="stats">
+      <div><strong>10</strong><span>Locations</span></div>
+      <div><strong>6</strong><span>Art Forms</span></div>
+      <div><strong>4+</strong><span>Historic Eras</span></div>
+    </div>
+  </div>
+</section>
+
+<main class="wrap">
+  <div class="eyebrow">Explore by art form</div>
+  <div class="controls">
+    <button class="on" data-filter="all">All</button>
+    <button data-filter="architecture">Architecture</button>
+    <button data-filter="painting">Painting</button>
+    <button data-filter="sculpture">Sculpture</button>
+    <button data-filter="folk">Folk</button>
+    <button data-filter="modern">Modern</button>
+  </div>
+
+  <div class="grid">
+    <section class="map-card">
+      <div class="map-title">CLICK A LOCATION</div>
+      <div class="india">
+        <svg viewBox="0 0 500 650" aria-label="Stylized map of India">
+          <path d="M209 35 L283 42 L313 71 L340 78 L350 109 L387 122 L366 156 L373 184 L352 208 L374 241 L353 270 L337 292 L337 329 L317 354 L316 392 L294 420 L289 465 L270 502 L250 548 L229 610 L211 569 L199 524 L178 484 L164 442 L145 407 L142 366 L122 336 L131 300 L112 268 L120 230 L105 197 L124 164 L118 131 L145 114 L154 82 L183 72 Z"
+            fill="#d8c88e" stroke="#305e61" stroke-width="7" stroke-linejoin="round"/>
+          <path d="M125 164 L77 147 L47 119 L70 93 L103 102 L118 131" fill="#d8c88e" stroke="#305e61" stroke-width="7" stroke-linejoin="round"/>
+          <path d="M387 122 L430 104 L454 119 L431 146 L397 154" fill="#d8c88e" stroke="#305e61" stroke-width="7" stroke-linejoin="round"/>
+        </svg>
+
+        <button class="pin" data-id="jaipur" style="left:31%;top:28%"><span>1</span><label>Jaipur</label></button>
+        <button class="pin" data-id="agra" style="left:42%;top:31%"><span>2</span><label>Agra</label></button>
+        <button class="pin" data-id="sanchi" style="left:43%;top:43%"><span>3</span><label>Sanchi</label></button>
+        <button class="pin" data-id="ajanta" style="left:34%;top:53%"><span>4</span><label>Ajanta</label></button>
+        <button class="pin" data-id="hampi" style="left:37%;top:68%"><span>5</span><label>Hampi</label></button>
+        <button class="pin" data-id="thanjavur" style="left:48%;top:82%"><span>6</span><label>Thanjavur</label></button>
+        <button class="pin" data-id="puri" style="left:65%;top:57%"><span>7</span><label>Puri</label></button>
+        <button class="pin" data-id="madhubani" style="left:67%;top:36%"><span>8</span><label>Madhubani</label></button>
+        <button class="pin" data-id="kolkata" style="left:72%;top:44%"><span>9</span><label>Kolkata</label></button>
+        <button class="pin" data-id="santiniketan" style="left:68%;top:41%"><span>10</span><label>Santiniketan</label></button>
+      </div>
+    </section>
+
+    <aside class="panel">
+      <div class="big" id="emoji">🗺️</div>
+      <div class="eyebrow" id="state">Select a location</div>
+      <h2 id="title">Explore India's art geography</h2>
+      <div class="sub" id="style">Click any numbered point on the map.</div>
+      <p id="desc">You will see the region's major art tradition, historical context and the reason the location matters to Indian art history.</p>
+      <div class="facts" id="facts"></div>
+      <div class="tags" id="tags"></div>
+    </aside>
+  </div>
+
+  <div class="region-cards" id="regionCards"></div>
+</main>
+<footer>Interactive Art Map — Indian Art History · CO1 Project</footer>
+
+<script>
+const data={
+jaipur:{state:"Rajasthan",title:"Jaipur",style:"Rajput painting & decorative arts",type:"painting",emoji:"🎨",period:"17th–19th c.",focus:"Miniatures, crafts",desc:"Jaipur grew into an important center of Rajput court culture. Miniature painting, manuscripts, jewelry, textiles and decorative arts flourished under royal patronage.",tags:["Rajput","Miniature Painting","Court Culture"]},
+agra:{state:"Uttar Pradesh",title:"Agra",style:"Mughal imperial art",type:"architecture",emoji:"🏛️",period:"16th–17th c.",focus:"Architecture, court art",desc:"Agra was a major Mughal center. Imperial architecture, manuscript illustration, stone inlay and courtly patronage shaped one of the most influential artistic environments in early modern India.",tags:["Mughal","Architecture","Pietra Dura"]},
+sanchi:{state:"Madhya Pradesh",title:"Sanchi",style:"Early Buddhist art",type:"sculpture",emoji:"☸️",period:"3rd c. BCE onward",focus:"Stupas, reliefs",desc:"Sanchi's stupas and carved gateways are crucial for understanding early Buddhist narrative art, symbols and architectural form.",tags:["Buddhist","Stupa","Relief Sculpture"]},
+ajanta:{state:"Maharashtra",title:"Ajanta",style:"Buddhist murals",type:"painting",emoji:"🪷",period:"2nd c. BCE–6th c. CE",focus:"Murals, rock-cut caves",desc:"Ajanta's cave paintings preserve some of the greatest surviving examples of ancient Indian mural art, with Buddhist narratives, court scenes and richly modeled figures.",tags:["Murals","Buddhist Art","Rock-cut"]},
+hampi:{state:"Karnataka",title:"Hampi",style:"Vijayanagara visual culture",type:"architecture",emoji:"🛕",period:"14th–16th c.",focus:"Temple architecture",desc:"Hampi's temples, bazaars and royal complexes demonstrate the scale and visual power of Vijayanagara architecture and sculpture.",tags:["Vijayanagara","Temple Art","Urban Design"]},
+thanjavur:{state:"Tamil Nadu",title:"Thanjavur",style:"Chola bronzes & temples",type:"sculpture",emoji:"🔥",period:"9th–13th c.",focus:"Bronze icons",desc:"Thanjavur is central to Chola artistic history. Monumental temples and bronze icons such as Nataraja combine ritual function with extraordinary technical refinement.",tags:["Chola","Bronze","Nataraja"]},
+puri:{state:"Odisha",title:"Puri",style:"Pattachitra",type:"folk",emoji:"🖌️",period:"Living tradition",focus:"Painted cloth",desc:"Puri is strongly connected with Pattachitra, a devotional painting tradition using prepared cloth or palm leaf, often centered on Jagannath and Krishna themes.",tags:["Pattachitra","Folk Art","Jagannath"]},
+madhubani:{state:"Bihar",title:"Madhubani",style:"Mithila painting",type:"folk",emoji:"🌿",period:"Living tradition",focus:"Ritual & folk painting",desc:"Mithila painting is known for dense pattern, symbolic motifs, bold outlines and themes from mythology, ritual and the natural world.",tags:["Mithila","Folk Painting","Ritual"]},
+kolkata:{state:"West Bengal",title:"Kolkata",style:"Bengal School & modern art",type:"modern",emoji:"🖼️",period:"19th–20th c.",focus:"Modern Indian art",desc:"Kolkata became a major center of modern Indian art and the Bengal School, where artists sought alternatives to colonial academic realism.",tags:["Bengal School","Modernism","Nationalism"]},
+santiniketan:{state:"West Bengal",title:"Santiniketan",style:"Kala Bhavana",type:"modern",emoji:"📚",period:"20th c.",focus:"Art education & murals",desc:"Santiniketan's Kala Bhavana became a landmark in Indian art education. Artists including Nandalal Bose and Benode Behari Mukherjee developed context-sensitive modern practices.",tags:["Kala Bhavana","Murals","Art Education"]}
+};
+
+const panel={
+emoji:document.getElementById('emoji'),state:document.getElementById('state'),title:document.getElementById('title'),
+style:document.getElementById('style'),desc:document.getElementById('desc'),facts:document.getElementById('facts'),tags:document.getElementById('tags')
+};
+
+function show(id){
+ const d=data[id];
+ document.querySelectorAll('.pin').forEach(p=>p.classList.toggle('active',p.dataset.id===id));
+ panel.emoji.textContent=d.emoji;
+ panel.state.textContent=d.state;
+ panel.title.textContent=d.title;
+ panel.style.textContent=d.style;
+ panel.desc.textContent=d.desc;
+ panel.facts.innerHTML=`<div><small>Period</small><b>${d.period}</b></div><div><small>Main Focus</small><b>${d.focus}</b></div>`;
+ panel.tags.innerHTML=d.tags.map(t=>`<span class="tag">${t}</span>`).join('');
+}
+
+document.querySelectorAll('.pin').forEach(p=>p.onclick=()=>show(p.dataset.id));
+
+const cards=document.getElementById('regionCards');
+Object.entries(data).forEach(([id,d])=>{
+ const c=document.createElement('div');c.className='region';c.dataset.type=d.type;c.dataset.id=id;
+ c.innerHTML=`<b>${d.emoji} ${d.title}</b><span>${d.style}</span>`;
+ c.onclick=()=>{show(id);document.querySelector('.panel').scrollIntoView({behavior:'smooth',block:'center'})};
+ cards.appendChild(c);
+});
+
+document.querySelectorAll('.controls button').forEach(btn=>{
+ btn.onclick=()=>{
+   document.querySelectorAll('.controls button').forEach(b=>b.classList.remove('on'));btn.classList.add('on');
+   const f=btn.dataset.filter;
+   document.querySelectorAll('.region').forEach(c=>c.style.display=f==='all'||c.dataset.type===f?'block':'none');
+   document.querySelectorAll('.pin').forEach(p=>{
+      const d=data[p.dataset.id];
+      p.style.display=f==='all'||d.type===f?'block':'none';
+   });
+ };
+});
+</script>
+</body>
+</html>
